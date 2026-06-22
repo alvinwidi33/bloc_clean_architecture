@@ -20,15 +20,19 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     try {
       await _remoteDataSource.createUser(createdAt: createdAt, name: name, avatar: avatar);
       return const Right(null);
-    } on ApiException catch(e){
-      return Left(ApiFailure(message: e.message, statusCode: e.statusCode));
+    } on APIException catch(e){
+      return Left(APIFailure(message: e.message, statusCode: e.statusCode));
     }
   }
 
   @override
   ResultFuture<List<User>> getUsers() async {
-    // TODO: implement getUsers
-    throw UnimplementedError();
+    try {
+      final result = await _remoteDataSource.getUsers();
+      return Right(result);
+    } on APIException catch(e){
+      return Left(APIFailure.fromException(e));
+    }
   }
   
 }
