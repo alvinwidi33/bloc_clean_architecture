@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc_clean_architecture/core/errors/exceptions.dart';
 import 'package:bloc_clean_architecture/core/utils/constants.dart';
 import 'package:bloc_clean_architecture/src/authentication/data/datasources/authentication_remote_data_source.dart';
+import 'package:bloc_clean_architecture/src/authentication/data/models/user_model.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -56,7 +57,11 @@ void main() {
         final methodCall = remoteDataSource.createUser;
 
         expect(
-          () async => methodCall(createdAt: 'createdAt', name: 'name', avatar: 'avatar'),
+          () async => methodCall(
+            createdAt: 'createdAt',
+            name: 'name',
+            avatar: 'avatar',
+          ),
           throwsA(
             const APIException(
               message: 'Invalid email address',
@@ -73,6 +78,45 @@ void main() {
               'avatar': 'avatar',
             }),
           ),
+        ).called(1);
+        verifyNoMoreInteractions(client);
+      },
+    );
+  });
+
+  group("getUsers", () {
+    final tUsers = [UserModel.empty()];
+    test("should return [List<User>] when the status code is 200", () async {
+      when(() => client.get(any())).thenAnswer(
+        (_) async => http.Response(jsonEncode([tUsers.first.toMap()]), 200),
+      );
+
+      final result = await remoteDataSource.getUsers();
+
+      expect(result, equals(tUsers));
+
+      verify(
+        () => client.get(Uri.parse('$kBaseUrl$kGetUserEndpoint')),
+      ).called(1);
+    });
+
+    test(
+      "should throw [APIException] when the status code is not 200",
+      () async {
+        final tMessage = "Server Down";
+
+        when(
+          () => client.get(any()),
+        ).thenAnswer((_) async => http.Response(tMessage, 500));
+
+        final methodCall = remoteDataSource.getUsers;
+
+        expect(
+          () => methodCall(),
+          throwsA(APIException(message: tMessage, statusCode: 500)),
+        );
+        verify(
+          () => client.get(Uri.parse('$kBaseUrl$kGetUserEndpoint')),
         ).called(1);
         verifyNoMoreInteractions(client);
       },
