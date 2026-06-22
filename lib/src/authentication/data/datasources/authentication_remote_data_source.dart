@@ -28,7 +28,8 @@ class AuthenticationRemoteDataSourceImpl
     required String name,
     required String avatar,
   }) async {
-    final response = await _client.post(
+    try {
+      final response = await _client.post(
       Uri.parse('$kBaseUrl$kCreateUserEndpoint'),
       body: jsonEncode({
         'createdAt': createdAt,
@@ -41,6 +42,9 @@ class AuthenticationRemoteDataSourceImpl
         message: response.body,
         statusCode: response.statusCode,
       );
+    }
+    } catch(e) {
+      throw APIException(message: e.toString(), statusCode: 505);
     }
   }
 
