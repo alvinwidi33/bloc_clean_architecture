@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_clean_architecture/src/authentication/domain/usecases/create_user.dart';
 import 'package:bloc_clean_architecture/src/authentication/domain/usecases/get_users.dart';
 import 'package:bloc_clean_architecture/src/authentication/presentation/bloc/authentication_state.dart';
-import 'package:equatable/equatable.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit({
