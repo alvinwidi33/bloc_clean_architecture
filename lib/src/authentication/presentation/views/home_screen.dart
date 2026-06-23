@@ -4,7 +4,6 @@ import 'package:bloc_clean_architecture/src/authentication/presentation/widgets/
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 
 import '../widgets/add_user_dialog.dart';
 
